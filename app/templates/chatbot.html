@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <title>SIYA</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<style>
+      .img-container {
+        text-align: center;
+      }
+ .page-footer {
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: white;
+   color: black;
+   text-align: center;
+   padding-bottom: 20px;
+
+}
+    .navbar-nav {
+      font-family:Georgia;
+      font-size: 20px
+    }
+</style>
+
+<nav class="navbar navbar-expand-md bg-white navbar-light fixed-top">
+  <a class="navbar-brand" href="/"></a>
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+      <a class="nav-link text-primary"  href="/">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-info" href="/projects">Projects</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-danger" href="/team">Team</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-warning" href="/aboutus">About us</a>
+    </li>
+  </ul>
+</nav>
+<body>
+	<h1 style="padding-top: 100px; padding-left: 110px; font-family:Georgia;">Examingo</h1>
+  <div class="container">
+    <br><br>
+    <h4>Code Author </h4>
+    <ul>
+      <li><h5>Manav Chouhan</h5></li>
+    </ul>
+
+
+  <br>
+
+  <h4>Requirements:</h4>
+  <ul>
+    <li>Python</li>
+    <li>Flask</li>
+    <li>NLTK toolkit</li>
+    <li>Deep Learning Framework- tensorflow</li>
+    <li>CSS Framework - Bootstrap</li>
+  </ul>
+
+  <br><br>
+  <div style="border: 2px solid blue; border-radius: 25px;">
+    <pre>
+    <code>
+      tensorflow.reset_default_graph()
+
+        net = tflearn.input_data(shape=[None, len(cl.training[0])])
+        net = tflearn.fully_connected(net, 8)
+        net = tflearn.fully_connected(net, 8)
+        net = tflearn.fully_connected(net, len(cl.output[0]), activation="softmax")
+        net = tflearn.regression(net)
+
+        cl.model = tflearn.DNN(net)
+        <hr>
+        <b>Explanation:</b>
+        Create DL model.
+    </code>
+  </pre>
+</div><br><br>
+  <div style="border: 2px solid blue; border-radius: 25px;">
+    <pre>
+    <code>
+      with open("intents.json") as file:
+            data = json.load(file)
+
+        try:
+            with open("data.pickle", "rb") as f:
+                words, labels, cl.training, cl.output = pickle.load(f)
+        except:
+            words = []
+            labels = []
+            docs_x = []
+            docs_y = []
+
+            for intent in data["intents"]:
+                for pattern in intent["patterns"]:
+                    wrds = nltk.word_tokenize(pattern)
+                    words.extend(wrds)
+                    docs_x.append(wrds)
+                    docs_y.append(intent["tag"])
+
+                if intent["tag"] not in labels:
+                    labels.append(intent["tag"])
+
+            words = [stemmer.stem(w.lower()) for w in words if w != "?"]
+            words = sorted(list(set(words)))
+
+            labels = sorted(labels)
+
+            cl.training = []
+            cl.output = []
+
+            out_empty = [0 for _ in range(len(labels))]
+
+            for x, doc in enumerate(docs_x):
+                bag = []
+
+                wrds = [stemmer.stem(w.lower()) for w in doc]
+
+                for w in words:
+                    if w in wrds:
+                        bag.append(1)
+                    else:
+                        bag.append(0)
+
+                output_row = out_empty[:]
+                output_row[labels.index(docs_y[x])] = 1
+
+                cl.training.append(bag)
+                cl.output.append(output_row)
+
+
+            cl.training = numpy.array(cl.training)
+            cl.output = numpy.array(cl.output)
+
+            with open("data.pickle", "wb") as f:
+                pickle.dump((words, labels, cl.training, cl.output), f)
+        #cl.training.append(1)
+        print(cl.training)
+        modelst()
+
+        #try:
+        #    cl.model.load("model.tflearn")
+        #except:
+        cl.model.fit(cl.training, cl.output, n_epoch=2000, batch_size=8, show_metric=True)
+        cl.model.save("model.tflearn")
+
+
+        <hr>
+        <b>Explanation:</b>
+        Train the model
+    </code>
+  </pre>
+</div><br><br>
+
+
+  <div style="border: 2px solid blue; border-radius: 25px;">
+    <pre>
+    <code>
+      user_response = request.args.get('msg')
+        user_response=user_response.lower()
+        if(user_response!='bye'):
+            if(user_response=='thanks' or user_response=='thank you' ):
+                return str("You are welcome..")
+            else:
+                #sent_tokens.remove(user_response)
+                if(greeting(user_response)!=None):
+                    return str(greeting(user_response))
+                else:
+                    #print("ROBO: ",end="")
+                    return str(response(user_response))
+
+        <hr>
+        <b>Explanation:</b>
+        Get bot response
+    </code>
+  </pre>
+</div><br><br>
+
+
+
+
+<h4>ScreenShots:</h4>
+
+<br><br>
+
+<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-100" src="/static/chatbotss.png" alt="First slide">
+    </div>
+
+
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div><br><br>
+
+<footer class="page-footer full-width">
+        <div class="white text-center padding-top-s padding-bottom-s text-smooth text-small">© 2020 Siya-Portfolio</div>
+    </footer>
+
+</body>
+
+
+
+</html>
